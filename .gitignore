@@ -1,0 +1,10 @@
+.idea
+.DS_Store
+lerna-debug.log
+swagger.json
+node_modules
+stubs.ts
+**.env
+.vscode
+.npmrc
+yarn.lock

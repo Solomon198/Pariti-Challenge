@@ -1,0 +1,11 @@
+{
+  "useWorkspaces": true,
+  "npmClient": "npm",
+  "version": "independent",
+  "packages": [
+    "fe-libs/*",
+    "frontends/*",
+    "backends/*"
+  ]
+
+}
