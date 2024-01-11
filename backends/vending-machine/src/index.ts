@@ -2,7 +2,7 @@ import { app } from "./app";
 import env from "./env/env";
 
 const startApplication = async () => {
-  app.listen(env.PORT, () => {
+  app.listen(env.PORT, (): void => {
     console.log(`Application Running at PORT ${env.PORT}`);
   });
 };

@@ -1,19 +1,21 @@
-import { cleanEnv, str, num, testOnly } from "envalid";
-require("dotenv").config();
+import { cleanEnv, str, num } from 'envalid'
+import dotEnv from 'dotenv'
+
+dotEnv.config()
 
 export interface ENV {
-  NODE_ENV: string;
-  PORT: number;
+  NODE_ENV: string
+  PORT: number
 }
 
 const getEnv = (): ENV => {
   const env = cleanEnv(process.env, {
     NODE_ENV: str(),
-    PORT: num(),
-  });
+    PORT: num()
+  })
 
-  return env as ENV;
-};
+  return env as ENV
+}
 
-const env = getEnv();
-export default env;
+const env = getEnv()
+export default env
