@@ -2,7 +2,8 @@
   "npmClient": "npm",
   "version": "independent",
   "packages": [
-    "frontends/*"
+    "frontends/*",
+    "backends/*"
   ]
 
 }

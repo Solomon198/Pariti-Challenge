@@ -7,13 +7,15 @@
     "lerna": "^6.5.1"
   },
   "scripts": {
-    "build:libs": "npm run clean; npm ci; lerna run build --concurrency 1",
+    "build:libs": "npm run build --workspaces",
     "clean": "npm run clean:node_modules; npm run clean:build",
     "clean:lock:files": "find . -name 'package-lock.json' -type f -prune -print -exec rm -rf '{}' \\;",
     "clean:build": "find . -name 'build' -o -name 'dist' -type d -prune -print -exec rm -rf '{}' \\;",
     "clean:node_modules": "find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \\;",
     "lint": "lerna run lint",
     "test": "lerna run test",
-    "start:dev": "lerna run start:dev --stream"
+    "start:dev": "lerna run start:dev --stream",
+    "start":"lerna run build && lerna run start",
+    "install:deps": "npm i && lerna bootstrap"
   }
 }
