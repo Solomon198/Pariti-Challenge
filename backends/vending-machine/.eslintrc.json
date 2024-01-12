@@ -3,7 +3,7 @@
         "browser": true,
         "es2021": true
     },
-    "extends": ["airbnb-base","standard-with-typescript"],
+    "extends": [],
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module"
