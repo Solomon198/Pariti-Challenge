@@ -1,10 +1,12 @@
-import { getAllCurrencies } from "../currency-manager";
-import { Currency } from "../currency-manager/currency";
+import { getAllCurrencyCoins } from "../currency-manager";
+import { CurrencyValue } from "../currency-manager/currency";
 import CreateProducts, { IProduct } from "../product-manager";
 
-const currencies = getAllCurrencies();
+const currencies = getAllCurrencyCoins();
+
 class VendingMachine {
-  machineVault: Currency;
+  userDeposit: number = 0;
+  machineVault: CurrencyValue[];
   products: IProduct[];
   constructor(
     currency: keyof typeof currencies,
@@ -25,6 +27,16 @@ class VendingMachine {
     throw new Error(`No product with slot=${slot} available!`);
   }
 
+  private findCurrencyByValue(currencyValue: number): CurrencyValue {
+    const foundMoney = this.machineVault.find(
+      (currency) => currency.value === currencyValue
+    );
+    if (foundMoney) {
+      return foundMoney;
+    }
+    throw new Error("Invalid coins does not exist!");
+  }
+
   //Admin operations
   setProductPrize(slot: number, newPrice: number): IProduct {
     const product = this.findProductBySlotNumber(slot);
@@ -42,9 +54,8 @@ class VendingMachine {
     );
   }
 
-  updateCoins(currencyValue: number, updateCoinQty: number): Currency {
-    const { coins, notes } = this.machineVault;
-    const foundMoney = [...notes, ...coins].find(
+  updateCoins(currencyValue: number, updateCoinQty: number): CurrencyValue[] {
+    const foundMoney = this.machineVault.find(
       (currency) => currency.value === currencyValue
     );
     if (foundMoney) {
@@ -52,21 +63,18 @@ class VendingMachine {
       return this.machineVault;
     }
     throw new Error(
-      `Current currency does not have support for ${currencyValue} ${coins[0].name} or ${notes[0].name}`
+      `Current coins does not have support for ${currencyValue}${this.machineVault[0].symbol}`
     );
   }
 
-  withdrawFunds(currencyValue: number, quantity: number): Currency {
-    const { coins, notes } = this.machineVault;
-    const foundMoney = [...notes, ...coins].find(
-      (currency) => currency.value === currencyValue
-    );
+  withdrawFunds(coinValue: number, quantity: number): CurrencyValue[] {
+    const foundMoney = this.findCurrencyByValue(coinValue);
     if (foundMoney) {
       foundMoney.balance = foundMoney.balance - quantity;
       return this.machineVault;
     }
     throw new Error(
-      `Current currency does not have support for ${currencyValue} ${coins[0].name} or ${notes[0].name}`
+      `Coins does not have support for ${coinValue} ${this.machineVault[0].symbol}`
     );
   }
 }
