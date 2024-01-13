@@ -2,8 +2,9 @@ import express from "express";
 import "express-async-errors";
 import { json } from "body-parser";
 import cookieSession from "cookie-session";
-import { getAllCurrencies } from "./core/currency-manager";
+import VendingMachine from "./core/vending-machine";
 
+console.log(VendingMachine.machineVault);
 // ----- GENERAL CONFIG ---- //
 const app = express();
 app.set("trust proxy", true);

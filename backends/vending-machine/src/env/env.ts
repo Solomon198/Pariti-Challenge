@@ -1,21 +1,27 @@
-import { cleanEnv, str, num } from 'envalid'
-import dotEnv from 'dotenv'
+import { cleanEnv, str, num } from "envalid";
+import { getAllCurrencyCoins } from "../core/currency-manager";
+const coins = getAllCurrencyCoins();
 
-dotEnv.config()
-
+require("dotenv").config();
 export interface ENV {
-  NODE_ENV: string
-  PORT: number
+  NODE_ENV: string;
+  PORT: number;
+  COINS_CURRENCY: "dollar" | "euro";
+  SLOT_SIZE: number;
+  SLOTS: number;
 }
 
 const getEnv = (): ENV => {
   const env = cleanEnv(process.env, {
     NODE_ENV: str(),
-    PORT: num()
-  })
+    PORT: num(),
+    COINS_CURRENCY: str({ choices: Object.keys(coins) }),
+    SLOT_SIZE: num(),
+    SLOTS: num(),
+  });
 
-  return env as ENV
-}
+  return env as ENV;
+};
 
-const env = getEnv()
-export default env
+const env = getEnv();
+export default env;

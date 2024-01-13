@@ -7,13 +7,8 @@ export interface CurrencyValue {
 
 export class CreateCurrency {
   constructor(private coins: CurrencyValue[]) {
-    this.addCoins(coins);
-  }
-
-  addCoins(coins: CurrencyValue[]): void {
-    coins.forEach((coin) => {
-      this.coins.push(coin);
-    });
+    // copying config values to avoid mutation from other part of code
+    this.coins = coins.map((coin) => ({ ...coin }));
   }
 
   getCurrency(): CurrencyValue[] {
