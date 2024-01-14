@@ -2,6 +2,7 @@ import env from "../../env/env";
 import { getAllCurrencyCoins } from "../currency-manager";
 import { CurrencyValue } from "../currency-manager/currency";
 import CreateProducts, { IProduct } from "../product-manager";
+import _ from "lodash";
 
 const currencies = getAllCurrencyCoins();
 
@@ -51,6 +52,7 @@ class VendingMachine {
     const product = this.findProductBySlotNumber(slot);
     if (availableQty <= this.slotSize) {
       product.quantity = availableQty;
+      return product;
     }
     throw new Error(
       `You can't add more product than this machine can accomodate`
@@ -68,52 +70,57 @@ class VendingMachine {
     throw new Error("Unsupported type of coin");
   }
 
-  withdrawFunds(coinValue: number, quantity: number): CurrencyValue[] {
+  withdrawFunds(
+    coinValue: number,
+    quantity: number
+  ): Array<Omit<CurrencyValue, "balance">> {
     const foundMoney = this.findCurrencyByValue(coinValue);
     if (foundMoney) {
+      if (foundMoney.balance < quantity) throw new Error("Insufficient funds");
       foundMoney.balance = foundMoney.balance - quantity;
-      return this.machineVault;
+      return Array(quantity).map((__) => _.omit(foundMoney, "balance"));
     }
-    throw new Error(
-      `Coins does not have support for ${coinValue} ${this.machineVault[0].symbol}`
-    );
+    return {} as any;
   }
 
   // USER ACTIONS
 
-  selectSlot(slot: number): number {
-    const product = this.products.find((product) => product.slot === slot);
+  selectSlot(slot: number): IProduct {
+    const product = this.findProductBySlotNumber(slot);
     if (product) {
       if (product.quantity === 0) throw new Error("Product out of stock!");
       this.selectedSlot = slot;
-      return slot;
+      return product;
     }
     throw new Error("Please enter a valid slot");
   }
 
-  depositFunds(coinValue: number) {
+  depositFunds(coinValue: number): CurrencyValue {
     const foundMoney = this.findCurrencyByValue(coinValue);
     if (foundMoney) {
       this.userDeposit += coinValue;
       foundMoney.balance += 1;
+      return foundMoney;
     }
     throw new Error(`Could not find coins ${this.machineVault[0].symbol}`);
   }
 
-  getUserChange(change: number): CurrencyValue[] {
+  getUserChange(change: number): Array<Omit<CurrencyValue, "balance">> {
+    if (change === 0) return [];
     const userChange: CurrencyValue[] = [];
     const copiedVault = this.machineVault.map((coin) => ({
       ...coin,
     }));
-    while (change !== 0) {
+    while (change > 0) {
       for (let i = this.machineVault.length - 1; i >= 0; i--) {
         if (copiedVault[i].value > change) continue;
         copiedVault[i].balance -= 1;
-        change -= change - copiedVault[i].value;
+        change -= copiedVault[i].value;
         userChange.push(copiedVault[i]);
         if (change === 0) {
           this.machineVault = copiedVault;
-          return userChange;
+          this.userDeposit = 0;
+          return userChange.map((change) => _.omit(change, "balance"));
         }
       }
     }
@@ -122,18 +129,20 @@ class VendingMachine {
     );
   }
 
-  confirmPurchase(): CurrencyValue[] {
+  confirmPurchase(): Array<Omit<CurrencyValue, "balance">> {
     if (!this.selectedSlot) throw new Error("Please select a slot");
-    const product = this.products.find(
-      (product) => product.slot === this.selectedSlot
-    );
+    const product = this.findProductBySlotNumber(this.selectedSlot);
     if (this.userDeposit < product!.price) {
-      throw new Error(`Insufficient funds to purchase ${product?.name} `);
+      throw new Error(`Insufficient funds to purchase product`);
     }
     const change = this.userDeposit - product!.price;
     const userChange = this.getUserChange(change);
     product!.quantity -= 1;
     return userChange;
+  }
+
+  cancelPurchase(): Array<Omit<CurrencyValue, "balance">> {
+    return this.getUserChange(this.userDeposit);
   }
 
   ressetMachine() {
