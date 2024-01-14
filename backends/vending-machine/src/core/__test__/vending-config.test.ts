@@ -1,6 +1,7 @@
 import vendingMachine from "../vending-machine";
 import { getAllCurrencyCoins } from "../currency-manager";
 import env from "../../env/env";
+import { MACHINE_OPERATION_ERRORS } from "../errors-defination";
 
 const coinTypes = getAllCurrencyCoins();
 
@@ -43,10 +44,10 @@ describe("[ADMIN-ACTION]- Updating specific coin quantity or available in machin
     try {
       vendingMachine.updateCoins(coinValueToCollect, quantityAdded);
     } catch (e: any) {
-      expect(e.message).toEqual("Unsupported type of coin");
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.INVALID_COINS);
       return;
     }
-    throw "Unexpected test outcome - suppose to throw error for unsupported coin value";
+    throw "Unexpected test error for testing invalid coin";
   });
 });
 
@@ -68,10 +69,10 @@ describe("[ADMIN-ACTION]-Updating product price", () => {
     try {
       vendingMachine.setProductPrize(productSlot, newPrice);
     } catch (e: any) {
-      expect(e.message).toEqual("Invalid slot!. please enter a valid slot");
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.INVALID_SLOT);
       return;
     }
-    throw new Error("Should throw error since slot is invalid");
+    throw new Error("Unexpected test error for testing invalid slot");
   });
 });
 
@@ -92,14 +93,10 @@ describe("[ADMIN-ACTION]- update available products at a slot", () => {
     try {
       vendingMachine.adjustAvailableProduct(slot, newQty);
     } catch (e: any) {
-      expect(e.message).toEqual(
-        "You can't add more product than this machine can accomodate"
-      );
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.EXCEEDED_SLOT_SIZE);
       return;
     }
-    throw new Error(
-      "Should throw error when we insert more product than a slot can accomodate"
-    );
+    throw new Error("Unexpected test error for testing exceeding slot size");
   });
 
   it("Should throw an error when trying to add to slot not available", () => {
@@ -108,12 +105,10 @@ describe("[ADMIN-ACTION]- update available products at a slot", () => {
     try {
       vendingMachine.adjustAvailableProduct(slot, newQty);
     } catch (e: any) {
-      expect(e.message).toEqual("Invalid slot!. please enter a valid slot");
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.INVALID_SLOT);
       return;
     }
-    throw new Error(
-      "Should throw error when we try to access a slot not valid"
-    );
+    throw new Error("Unexpected test error for testing invalid slot");
   });
 });
 
@@ -135,12 +130,10 @@ describe("[ADMIN-ACTION]- admin should be able to withdraw from machine", () => 
     try {
       vendingMachine.withdrawFunds(coinToWithdraw, quantity);
     } catch (e: any) {
-      expect(e.message).toEqual("Invalid coins does not exist!");
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.INVALID_COINS);
       return;
     }
-    throw new Error(
-      "Should throw error when we try to access an invalid coins"
-    );
+    throw new Error("Unexpected test error for testing invalid coin");
   });
 
   it("Should throw an error when trying to withdraw with insufficient funds", () => {
@@ -149,11 +142,13 @@ describe("[ADMIN-ACTION]- admin should be able to withdraw from machine", () => 
     try {
       vendingMachine.withdrawFunds(coinToWithdraw, quantity);
     } catch (e: any) {
-      expect(e.message).toEqual("Insufficient funds");
+      expect(e.message).toEqual(
+        MACHINE_OPERATION_ERRORS.WITHDRAW_INSUFFICIENT_FUNDS
+      );
       return;
     }
     throw new Error(
-      "Should throw error when we try to withdraw with insufficient coins"
+      "Unexpected test error for testing withdrawing with insufficient funds"
     );
   });
 });
@@ -171,10 +166,10 @@ describe("[USER-ACTIONS] selecting a slot", () => {
     try {
       vendingMachine.selectSlot(slot);
     } catch (e: any) {
-      expect(e.message).toEqual("Invalid slot!. please enter a valid slot");
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.INVALID_SLOT);
       return;
     }
-    throw new Error("Should throw an error when an invalid slot is entered");
+    throw new Error("Unexpected test error for testing invalid slot");
   });
 });
 
@@ -192,10 +187,10 @@ describe("[USER-ACTIONS] depositing fund or funding machine", () => {
     try {
       vendingMachine.depositFunds(coinValue);
     } catch (e: any) {
-      expect(e.message).toEqual("Invalid coins does not exist!");
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.INVALID_COINS);
       return;
     }
-    throw new Error("should throw new error if invalid coin is entered");
+    throw new Error("Unexpected test error for testing invalid coins");
   });
 });
 
@@ -210,14 +205,49 @@ describe("[USER-ACTIONS] purchasing item in machine", () => {
     expect(product!.quantity).toEqual(productQtyBeforePurchase - 1);
   });
 
+  it("should be able to select slot fund machine and not buy item when change cannot be processed", () => {
+    const slot = vendingMachine.slots - 1;
+    initiateUserPurchase([1, 5, 10, 5, 25, 25], slot);
+    try {
+      // intentionally make 1 cent unavailable
+      vendingMachine.machineVault[0].balance = 0;
+      vendingMachine.confirmPurchase();
+    } catch (e: any) {
+      expect(e.message).toEqual(
+        MACHINE_OPERATION_ERRORS.CANNOT_PROCESS_CHANGE_ERROR
+      );
+      return;
+    }
+    throw new Error(
+      "Unexpected test error for testing inablility to process change"
+    );
+  });
+
+  it("should not be able to purchase item when out of stock", () => {
+    const slot = vendingMachine.slots - 1;
+    const productIndex = vendingMachine.products.findIndex(
+      (p) => p.slot === slot
+    );
+    // intentionally making product unavailable
+    vendingMachine.products[productIndex].quantity = 0;
+    try {
+      initiateUserPurchase([1, 5, 10, 5, 25, 25], slot);
+      vendingMachine.confirmPurchase();
+    } catch (e: any) {
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.PRODUCT_OUT_OF_STOCK);
+      return;
+    }
+    throw new Error("Unexpected test error for testing out of stock logic");
+  });
+
   it("should throw an error when trying to make a purchase without selecting a slot ", () => {
     try {
       vendingMachine.confirmPurchase();
     } catch (e: any) {
-      expect(e.message).toEqual("Please select a slot");
+      expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.SLOT_NOT_SELECTED);
       return;
     }
-    throw new Error("Should throw error when no slot is selected");
+    throw new Error("Unexpected test error for testing slot not selected");
   });
 
   it("Should throw error when trying to make purchases with insufficient funds", () => {
@@ -225,11 +255,13 @@ describe("[USER-ACTIONS] purchasing item in machine", () => {
       initiateUserPurchase([1], vendingMachine.slots - 1);
       vendingMachine.confirmPurchase();
     } catch (e: any) {
-      expect(e.message).toEqual("Insufficient funds to purchase product");
+      expect(e.message).toEqual(
+        MACHINE_OPERATION_ERRORS.PURCHASE_INSUFFICIENT_FUNDS
+      );
       return;
     }
     throw new Error(
-      "Should throw error when trying to buy an item with insufficient"
+      "Unexpected test error for testing unable to take money from a coin compactment"
     );
   });
 

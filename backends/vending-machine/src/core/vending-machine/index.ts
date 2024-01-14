@@ -1,6 +1,7 @@
 import env from "../../env/env";
 import { getAllCurrencyCoins } from "../currency-manager";
 import { CurrencyValue } from "../currency-manager/currency";
+import { MACHINE_OPERATION_ERRORS } from "../errors-defination";
 import CreateProducts, { IProduct } from "../product-manager";
 import _ from "lodash";
 
@@ -28,7 +29,7 @@ class VendingMachine {
     if (product) {
       return product;
     }
-    throw new Error(`Invalid slot!. please enter a valid slot`);
+    throw new Error(MACHINE_OPERATION_ERRORS.INVALID_SLOT);
   }
 
   private findCurrencyByValue(currencyValue: number): CurrencyValue {
@@ -38,7 +39,7 @@ class VendingMachine {
     if (foundMoney) {
       return foundMoney;
     }
-    throw new Error("Invalid coins does not exist!");
+    throw new Error(MACHINE_OPERATION_ERRORS.INVALID_COINS);
   }
 
   //Admin operations
@@ -54,20 +55,16 @@ class VendingMachine {
       product.quantity = availableQty;
       return product;
     }
-    throw new Error(
-      `You can't add more product than this machine can accomodate`
-    );
+    throw new Error(MACHINE_OPERATION_ERRORS.EXCEEDED_SLOT_SIZE);
   }
 
   updateCoins(currencyValue: number, updateCoinQty: number): CurrencyValue[] {
-    const foundMoney = this.machineVault.find(
-      (currency) => currency.value === currencyValue
-    );
+    const foundMoney = this.findCurrencyByValue(currencyValue);
     if (foundMoney) {
       foundMoney.balance += updateCoinQty;
       return this.machineVault;
     }
-    throw new Error("Unsupported type of coin");
+    throw new Error("Unexpected error updating coins");
   }
 
   withdrawFunds(
@@ -76,11 +73,12 @@ class VendingMachine {
   ): Array<Omit<CurrencyValue, "balance">> {
     const foundMoney = this.findCurrencyByValue(coinValue);
     if (foundMoney) {
-      if (foundMoney.balance < quantity) throw new Error("Insufficient funds");
+      if (foundMoney.balance < quantity)
+        throw new Error(MACHINE_OPERATION_ERRORS.WITHDRAW_INSUFFICIENT_FUNDS);
       foundMoney.balance = foundMoney.balance - quantity;
       return Array(quantity).map((__) => _.omit(foundMoney, "balance"));
     }
-    return {} as any;
+    throw new Error("Unexpected errror withdrawing funds");
   }
 
   // USER ACTIONS
@@ -88,11 +86,12 @@ class VendingMachine {
   selectSlot(slot: number): IProduct {
     const product = this.findProductBySlotNumber(slot);
     if (product) {
-      if (product.quantity === 0) throw new Error("Product out of stock!");
+      if (product.quantity === 0)
+        throw new Error(MACHINE_OPERATION_ERRORS.PRODUCT_OUT_OF_STOCK);
       this.selectedSlot = slot;
       return product;
     }
-    throw new Error("Please enter a valid slot");
+    throw new Error("Unexpected error selecting slot");
   }
 
   depositFunds(coinValue: number): CurrencyValue {
@@ -102,7 +101,7 @@ class VendingMachine {
       foundMoney.balance += 1;
       return foundMoney;
     }
-    throw new Error(`Could not find coins ${this.machineVault[0].symbol}`);
+    throw new Error("Unexpected error depositing funds");
   }
 
   getUserChange(change: number): Array<Omit<CurrencyValue, "balance">> {
@@ -114,6 +113,8 @@ class VendingMachine {
     while (change > 0) {
       for (let i = this.machineVault.length - 1; i >= 0; i--) {
         if (copiedVault[i].value > change) continue;
+        if (copiedVault[i].balance === 0)
+          throw new Error(MACHINE_OPERATION_ERRORS.CANNOT_PROCESS_CHANGE_ERROR);
         copiedVault[i].balance -= 1;
         change -= copiedVault[i].value;
         userChange.push(copiedVault[i]);
@@ -124,16 +125,15 @@ class VendingMachine {
         }
       }
     }
-    throw new Error(
-      "Transaction cannot be completed as system does not have change"
-    );
+    throw new Error("Unexpected error checking for change");
   }
 
   confirmPurchase(): Array<Omit<CurrencyValue, "balance">> {
-    if (!this.selectedSlot) throw new Error("Please select a slot");
+    if (!this.selectedSlot)
+      throw new Error(MACHINE_OPERATION_ERRORS.SLOT_NOT_SELECTED);
     const product = this.findProductBySlotNumber(this.selectedSlot);
     if (this.userDeposit < product!.price) {
-      throw new Error(`Insufficient funds to purchase product`);
+      throw new Error(MACHINE_OPERATION_ERRORS.PURCHASE_INSUFFICIENT_FUNDS);
     }
     const change = this.userDeposit - product!.price;
     const userChange = this.getUserChange(change);
