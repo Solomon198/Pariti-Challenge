@@ -6,7 +6,7 @@ require("dotenv").config();
 export interface ENV {
   NODE_ENV: string;
   PORT: number;
-  COINS_CURRENCY: "dollar" | "euro";
+  COINS_CURRENCY: keyof typeof coins;
   SLOT_SIZE: number;
   SLOTS: number;
 }

@@ -1,13 +1,7 @@
 import { faker } from "@faker-js/faker";
 import _ from "lodash";
 import { productPrizes } from "./product-configs";
-
-export interface IProduct {
-  name: string;
-  price: number;
-  slot: number;
-  quantity: number;
-}
+import { IProduct } from "@vending/utils";
 
 export default class CreateProducts {
   private products: IProduct[];

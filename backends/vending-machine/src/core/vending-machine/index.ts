@@ -1,8 +1,14 @@
 import env from "../../env/env";
 import { getAllCurrencyCoins } from "../currency-manager";
-import { CurrencyValue } from "../currency-manager/currency";
+import {
+  CurrencyValue,
+  IProduct,
+  TCurrencyValue,
+  TProduct,
+} from "@vending/utils";
 import { MACHINE_OPERATION_ERRORS } from "../errors-defination";
-import CreateProducts, { IProduct } from "../product-manager";
+import CreateProducts from "../product-manager";
+
 import _ from "lodash";
 
 const currencies = getAllCurrencyCoins();
@@ -67,10 +73,7 @@ class VendingMachine {
     throw new Error("Unexpected error updating coins");
   }
 
-  withdrawFunds(
-    coinValue: number,
-    quantity: number
-  ): Array<Omit<CurrencyValue, "balance">> {
+  withdrawFunds(coinValue: number, quantity: number): Array<TCurrencyValue> {
     const foundMoney = this.findCurrencyByValue(coinValue);
     if (foundMoney) {
       if (foundMoney.balance < quantity)
@@ -104,7 +107,7 @@ class VendingMachine {
     throw new Error("Unexpected error depositing funds");
   }
 
-  getUserChange(change: number): Array<Omit<CurrencyValue, "balance">> {
+  getUserChange(change: number): Array<TCurrencyValue> {
     if (change === 0) return [];
     const userChange: CurrencyValue[] = [];
     const copiedVault = this.machineVault.map((coin) => ({
@@ -128,7 +131,7 @@ class VendingMachine {
     throw new Error("Unexpected error checking for change");
   }
 
-  confirmPurchase(): Array<Omit<CurrencyValue, "balance">> {
+  confirmPurchase(): Array<TCurrencyValue> {
     if (!this.selectedSlot)
       throw new Error(MACHINE_OPERATION_ERRORS.SLOT_NOT_SELECTED);
     const product = this.findProductBySlotNumber(this.selectedSlot);
@@ -141,7 +144,7 @@ class VendingMachine {
     return userChange;
   }
 
-  cancelPurchase(): Array<Omit<CurrencyValue, "balance">> {
+  cancelPurchase(): Array<TCurrencyValue> {
     return this.getUserChange(this.userDeposit);
   }
 

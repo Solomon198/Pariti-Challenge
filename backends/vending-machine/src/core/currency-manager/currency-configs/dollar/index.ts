@@ -1,4 +1,4 @@
-import { CurrencyValue } from "../../currency";
+import { CurrencyValue } from "@vending/utils";
 
 const coinsConfig: CurrencyValue[] = [
   { name: "Penny", value: 1, symbol: "¢", balance: 10 },

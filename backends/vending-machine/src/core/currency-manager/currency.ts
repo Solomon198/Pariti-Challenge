@@ -1,9 +1,4 @@
-export interface CurrencyValue {
-  name: string;
-  value: number;
-  symbol: string;
-  balance: number;
-}
+import { CurrencyValue } from "@vending/utils";
 
 export class CreateCurrency {
   constructor(private coins: CurrencyValue[]) {
