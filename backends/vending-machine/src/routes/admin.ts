@@ -7,13 +7,32 @@ import {
   withDrawCoin,
 } from "../handlers";
 import expressAsyncHandler from "express-async-handler";
+import { ValidateRequest } from "../middlewares";
+import { validateUpdateProduct, validateUpdateCoin } from "../utils";
 
 const AdminRouter = express.Router();
 
 AdminRouter.get("/products", expressAsyncHandler(getProducts));
 AdminRouter.get("/coins", expressAsyncHandler(getCoins));
-AdminRouter.put("/products/:slot", expressAsyncHandler(updateProduct));
-AdminRouter.put("/coins/withdraw/:value", expressAsyncHandler(withDrawCoin));
-AdminRouter.put("/coins/:value", expressAsyncHandler(updateCoin));
+
+AdminRouter.put(
+  "/products/:slot",
+  validateUpdateProduct,
+  expressAsyncHandler(ValidateRequest),
+  expressAsyncHandler(updateProduct)
+);
+
+AdminRouter.put(
+  "/coins/withdraw/:coinValue",
+  validateUpdateCoin,
+  expressAsyncHandler(ValidateRequest),
+  expressAsyncHandler(withDrawCoin)
+);
+AdminRouter.put(
+  "/coins/:coinValue",
+  validateUpdateCoin,
+  expressAsyncHandler(ValidateRequest),
+  expressAsyncHandler(updateCoin)
+);
 
 export default AdminRouter;
