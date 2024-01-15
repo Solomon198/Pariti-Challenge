@@ -124,6 +124,7 @@ class VendingMachine {
         if (change === 0) {
           this.machineVault = copiedVault;
           this.userDeposit = 0;
+          this.selectedSlot = null;
           return userChange.map((change) => _.omit(change, "balance"));
         }
       }
