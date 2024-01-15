@@ -10,9 +10,9 @@ export const ErrorHandler = (
   const message = err.message;
   if (err instanceof CustomError) {
     // can use logger here
-    console.log(err.message);
+    if (process.env.NODE_ENV !== "test") console.log(err.message);
     return res.status(err.statusCode).send({ errors: err.serializeErrors() });
   }
-  console.log(message);
+  if (process.env.NODE_ENV !== "test") console.log(err.message);
   return res.status(500).send({ errors: [{ message: err.message }] });
 };

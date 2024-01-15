@@ -1,5 +1,6 @@
 import { cleanEnv, str, num } from "envalid";
 import { getAllCurrencyCoins } from "../core/currency-manager";
+
 const coins = getAllCurrencyCoins();
 
 require("dotenv").config();

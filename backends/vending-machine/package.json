@@ -11,13 +11,6 @@
     "start": "node ./build/index.js",
     "test:ci": "jest"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "setupFilesAfterEnv": [
-      "./src/test/setup.ts"
-    ]
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",

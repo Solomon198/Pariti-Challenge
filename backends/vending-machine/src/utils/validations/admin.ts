@@ -2,7 +2,7 @@ import { body, check } from "express-validator";
 
 export const validateUpdateProduct = [
   check("slot").isInt(),
-  body(["price", "quantity"]).isInt(),
+  body(["price", "quantity"]).isInt().optional(),
 ];
 
 export const validateUpdateCoin = [

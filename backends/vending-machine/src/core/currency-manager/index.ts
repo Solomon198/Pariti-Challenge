@@ -1,10 +1,19 @@
 import { CreateCurrency } from "./currency";
 import currencyConfigs from "./currency-configs";
 
+type TCurrencies = Lowercase<keyof typeof currencyConfigs>;
+
+type IntialObjectStruct = {
+  [K in TCurrencies]: CreateCurrency;
+};
+
 export function getAllCurrencyCoins() {
-  const { Dollar, Euro } = currencyConfigs;
-  return {
-    dollar: new CreateCurrency(Dollar.coinsConfig),
-    euro: new CreateCurrency(Euro.coinsConfig),
-  };
+  return Object.entries(currencyConfigs).reduce((prev, [currency, config]) => {
+    return {
+      ...prev,
+      [currency.toLowerCase() as TCurrencies]: new CreateCurrency(
+        config.coinsConfig
+      ),
+    };
+  }, {} as IntialObjectStruct);
 }

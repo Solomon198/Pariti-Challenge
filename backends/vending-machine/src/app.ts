@@ -17,7 +17,7 @@ app.use(
 );
 
 app.use("/admin", AdminRouter);
-app.use("/user", userRouter);
+app.use("/users", userRouter);
 
 app.all("*", async (req, res) => {
   res.send({});

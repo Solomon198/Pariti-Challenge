@@ -26,7 +26,7 @@ it("Should ensure vending machine vault is configured according to configured cu
   );
 });
 
-describe("[ADMIN-ACTION]- Updating specific coin quantity or available in machine", () => {
+describe("[VENDING-ADMIN-ACTION]- Updating specific coin quantity or available in machine", () => {
   it("Should be able to update a specific coin in machine valut", () => {
     const coinValueToCollect = 25;
     const quantityAdded = 20;
@@ -51,7 +51,7 @@ describe("[ADMIN-ACTION]- Updating specific coin quantity or available in machin
   });
 });
 
-describe("[ADMIN-ACTION]-Updating product price", () => {
+describe("[VENDING-ADMIN-ACTION]-Updating product price", () => {
   it("should be able to update product price", () => {
     // the last machine slot
     const productSlot = vendingMachine.slots;
@@ -76,7 +76,7 @@ describe("[ADMIN-ACTION]-Updating product price", () => {
   });
 });
 
-describe("[ADMIN-ACTION]- update available products at a slot", () => {
+describe("[VENDING-ADMIN-ACTION]- update available products at a slot", () => {
   it("Should be able to update available product quantity", () => {
     const slot = vendingMachine.slots - 1;
     const newQty = vendingMachine.slotSize; // refilling
@@ -112,7 +112,7 @@ describe("[ADMIN-ACTION]- update available products at a slot", () => {
   });
 });
 
-describe("[ADMIN-ACTION]- admin should be able to withdraw from machine", () => {
+describe("[VENDING-ADMIN-ACTION]- admin should be able to withdraw from machine", () => {
   it("should be able to withdraw a specific coin", () => {
     const coinToWithdraw = 25; // i.e 25 cents for dollar
     const quantity = 5; // number of coin to be taken
@@ -154,7 +154,7 @@ describe("[ADMIN-ACTION]- admin should be able to withdraw from machine", () => 
 });
 
 // USER ACTIONS
-describe("[USER-ACTIONS] selecting a slot", () => {
+describe("[VENDING-USER-ACTIONS] selecting a slot", () => {
   it("should be able to select slot successfully", () => {
     const slot = vendingMachine.slots; // last slot
     const productSlot = vendingMachine.selectSlot(slot);
@@ -173,7 +173,7 @@ describe("[USER-ACTIONS] selecting a slot", () => {
   });
 });
 
-describe("[USER-ACTIONS] depositing fund or funding machine", () => {
+describe("[VENDING-USER-ACTIONS] depositing fund or funding machine", () => {
   it("should be able to fund machine successfully", () => {
     const coinValue = 25;
     const coin = vendingMachine.machineVault.find((c) => c.value === coinValue);
@@ -194,7 +194,7 @@ describe("[USER-ACTIONS] depositing fund or funding machine", () => {
   });
 });
 
-describe("[USER-ACTIONS] purchasing item in machine", () => {
+describe("[VENDING-USER-ACTIONS] purchasing item in machine", () => {
   it("should be able to select slot fund machine and buy item successfully", () => {
     const slot = vendingMachine.slots - 1;
     const product = vendingMachine.products.find((p) => p.slot === slot);

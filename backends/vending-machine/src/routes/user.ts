@@ -1,6 +1,6 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
-import { getProducts, depositFunds, buyProduct } from "../handlers";
+import { getProducts, depositFunds, selectSlot, buyProduct } from "../handlers";
 import { ValidateRequest } from "../middlewares";
 import { validateDepositFunds, validateSelectSlot } from "../utils";
 
@@ -19,7 +19,7 @@ userRouter.post(
   "/select-slot",
   validateSelectSlot,
   expressAsyncHandler(ValidateRequest),
-  expressAsyncHandler(depositFunds)
+  expressAsyncHandler(selectSlot)
 );
 
 userRouter.post("/confirm-purchase", expressAsyncHandler(buyProduct));
