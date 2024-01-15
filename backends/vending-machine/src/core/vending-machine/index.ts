@@ -73,13 +73,13 @@ class VendingMachine {
     throw new Error("Unexpected error updating coins");
   }
 
-  withdrawFunds(coinValue: number, quantity: number): Array<TCurrencyValue> {
+  withdrawFunds(coinValue: number, quantity: number): CurrencyValue[] {
     const foundMoney = this.findCurrencyByValue(coinValue);
     if (foundMoney) {
       if (foundMoney.balance < quantity)
         throw new Error(MACHINE_OPERATION_ERRORS.WITHDRAW_INSUFFICIENT_FUNDS);
       foundMoney.balance = foundMoney.balance - quantity;
-      return Array(quantity).map((__) => _.omit(foundMoney, "balance"));
+      return Array(quantity).map((_)=>({...foundMoney}));
     }
     throw new Error("Unexpected errror withdrawing funds");
   }

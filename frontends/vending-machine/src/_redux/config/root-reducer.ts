@@ -1,2 +1,5 @@
 import { combineReducers } from '@reduxjs/toolkit'
-export const rootReducer = combineReducers({})
+import { AdminSlice } from '../actions'
+export const rootReducer = combineReducers({
+    admin: AdminSlice.reducer,
+})
