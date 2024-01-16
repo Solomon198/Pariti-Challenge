@@ -18,10 +18,10 @@ export const updateProduct = async (req: Request, res: Response) => {
       quantity?: number;
     };
 
-    if (quantity) {
+    if (quantity || quantity === 0) {
       vendingMachine.adjustAvailableProduct(slot, quantity);
     }
-    if (price) {
+    if (price || price === 0) {
       vendingMachine.setProductPrize(slot, price);
     }
     const product = vendingMachine.products.find((p) => p.slot === slot);

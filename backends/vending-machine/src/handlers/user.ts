@@ -28,7 +28,6 @@ export const buyProduct = async (req: Request, res: Response) => {
       (p) => p.slot === vendingMachine.selectedSlot
     );
     const change = vendingMachine.confirmPurchase();
-    
     res.send(new ResponsePayload({ change, product }));
   } catch (e: any) {
     throw new BadRequestError(e.message);

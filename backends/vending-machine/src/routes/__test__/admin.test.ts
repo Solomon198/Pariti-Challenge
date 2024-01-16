@@ -80,15 +80,13 @@ describe("[ADMIN-ROUTES]", () => {
   it("should be able to  add specific coin quantity", async () => {
     const coinValue = 25;
     const quantity = 30;
-    const coin = vendingMachine.machineVault.find((c) => c.value === coinValue);
-    const intialQty = coin!.balance;
     const response = await request(app)
       .put(`/admin/coins/${coinValue}`)
       .send({
         quantity,
       })
       .expect(200);
-    expect(response.body.data.balance).toEqual(quantity + intialQty);
+    expect(response.body.data.balance).toEqual(quantity);
   });
 
   it("should be able to withdraw specific coin quantity", async () => {

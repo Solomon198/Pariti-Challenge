@@ -71,7 +71,7 @@ class VendingMachine {
   updateCoins(currencyValue: number, updateCoinQty: number): CurrencyValue[] {
     const foundMoney = this.findCurrencyByValue(currencyValue);
     if (foundMoney) {
-      foundMoney.balance += updateCoinQty;
+      foundMoney.balance = updateCoinQty;
       return this.machineVault;
     }
     throw new Error("Unexpected error updating coins");
@@ -116,7 +116,7 @@ class VendingMachine {
       this.selectedSlot = null;
       this.userDeposit = 0;
       return [];
-    };
+    }
     const userChange: CurrencyValue[] = [];
     const copiedVault = this.machineVault.map((coin) => ({
       ...coin,
@@ -135,6 +135,7 @@ class VendingMachine {
           this.selectedSlot = null;
           return userChange.map((change) => _.omit(change, "balance"));
         }
+        break;
       }
     }
     throw new Error("Unexpected error checking for change");

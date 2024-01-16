@@ -15,7 +15,7 @@ export const updateCoin = async ({
     coinValue: number
     quantity: number
 }): Promise<AxiosResponse<any, any>> => {
-    return await axios.put(`admin/coins/${coinValue}`, { quantity })
+    return await axios.put(`/admin/coins/${coinValue}`, { quantity })
 }
 
 export const updateProduct = async ({

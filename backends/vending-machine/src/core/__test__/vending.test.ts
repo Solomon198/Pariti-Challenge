@@ -29,20 +29,19 @@ it("Should ensure vending machine vault is configured according to configured cu
 describe("[VENDING-ADMIN-ACTION]- Updating specific coin quantity or available in machine", () => {
   it("Should be able to update a specific coin in machine valut", () => {
     const coinValueToCollect = 25;
-    const quantityAdded = 20;
+    const newQty = 20;
     let coins = vendingMachine.machineVault.find(
       (v) => v.value === coinValueToCollect
     );
-    const initialCoinsQty = coins!.balance;
-    vendingMachine.updateCoins(coinValueToCollect, quantityAdded);
-    expect(coins!.balance).toEqual(initialCoinsQty + quantityAdded);
+    vendingMachine.updateCoins(coinValueToCollect, newQty);
+    expect(coins!.balance).toEqual(newQty);
   });
 
   it("should throw an error if coin value is not a valid coin in vault", () => {
     const coinValueToCollect = 20;
-    const quantityAdded = 20;
+    const newQty = 20;
     try {
-      vendingMachine.updateCoins(coinValueToCollect, quantityAdded);
+      vendingMachine.updateCoins(coinValueToCollect, newQty);
     } catch (e: any) {
       expect(e.message).toEqual(MACHINE_OPERATION_ERRORS.INVALID_COINS);
       return;

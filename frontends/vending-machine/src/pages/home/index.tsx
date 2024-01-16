@@ -25,7 +25,7 @@ const HomePage = (): JSX.Element => {
                         User Interface
                     </StyledButton>
                 </Link>
-                <Link to="/admin">
+                <Link to="/admin/manage-product">
                     <StyledButton
                         startIcon={<AdminPanelSettingsIcon />}
                         size="large"

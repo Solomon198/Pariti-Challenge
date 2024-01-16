@@ -31,11 +31,14 @@ export const AdminSlice = createSlice({
     reducers: {
         updatingCoin: (
             state,
-            action: PayloadAction<{ status: boolean; vault?: CurrencyValue[] }>
+            action: PayloadAction<{ status: boolean; vault?: CurrencyValue }>
         ) => {
             state.loadingProduct = action.payload.status
             if (action.payload.vault !== undefined) {
-                state.machineVault = action.payload.vault
+                const index = state.machineVault.findIndex(
+                    (i) => i.value === action.payload.vault?.value
+                )
+                state.machineVault[index] = action.payload.vault
             }
         },
         fetchingProduct: (
@@ -74,11 +77,14 @@ export const AdminSlice = createSlice({
         },
         withdrawingCoins: (
             state,
-            action: PayloadAction<{ status: boolean; coin?: CurrencyValue[] }>
+            action: PayloadAction<{ status: boolean; coin?: CurrencyValue }>
         ) => {
             state.withdrawingCashStatus = action.payload.status
             if (action.payload.coin !== undefined) {
-                state.withdrawals = action.payload.coin
+                const index = state.machineVault.findIndex(
+                    (i) => i.value === action.payload.coin?.value
+                )
+                state.machineVault[index] = action.payload.coin
             }
         },
     },

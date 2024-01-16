@@ -20,6 +20,7 @@ import {
 } from '../../../api'
 import { type AxiosResponse } from 'axios'
 import { type CurrencyValue, type IProduct } from '@vending/utils'
+import { toast } from 'react-toastify'
 
 export function* watchFetchProduct() {
     yield takeLeading(
@@ -31,11 +32,12 @@ export function* watchFetchProduct() {
                 const { data } = products as AxiosResponse
                 yield put(productFetched({ products: data.data as IProduct[] }))
                 yield put(fetchingProduct({ status: false }))
+                toast.success('Product fetched successfully!')
             } catch (e: any) {
                 yield put(fetchingProduct({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }
@@ -52,11 +54,12 @@ export function* watchFetchVault() {
                 const { data } = products as AxiosResponse
                 yield put(vaultFetched({ vault: data.data as CurrencyValue[] }))
                 yield put(fetchingVault({ status: false }))
+                toast.success('Coins fetched successfully!')
             } catch (e: any) {
                 yield put(fetchingVault({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }
@@ -76,14 +79,15 @@ export function* watchUpdateCoin() {
                 yield put(
                     updatingCoin({
                         status: false,
-                        vault: data.data as CurrencyValue[],
+                        vault: data.data as CurrencyValue,
                     })
                 )
+                toast.success('Coins udpated successfully!')
             } catch (e: any) {
                 yield put(updatingCoin({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }
@@ -103,14 +107,15 @@ export function* watchWithdrawCoin() {
                 yield put(
                     withdrawingCoins({
                         status: false,
-                        coin: data.data as CurrencyValue[],
+                        coin: data.data as CurrencyValue,
                     })
                 )
+                toast.success('Withdrawn successfully!')
             } catch (e: any) {
                 yield put(withdrawingCoins({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }
@@ -133,11 +138,12 @@ export function* watchUpdateProduct() {
                         product: data.data as IProduct,
                     })
                 )
+                toast.success('Product updated successfully!')
             } catch (e: any) {
                 yield put(updatingProduct({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }

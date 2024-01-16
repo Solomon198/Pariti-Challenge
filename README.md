@@ -31,6 +31,9 @@ To run application on `PROD` mode run
  npm run start
 ```
 
+**STEP 4 - Running Application**
+You can now view the application on `http://locahost:3000`
+
 #### Additional Scripts
 
 **Eslint - Checking code standard**
@@ -50,16 +53,16 @@ To run application on `PROD` mode run
 **Backend**
 The vending machine is highly configurable via environment variable. The table below explains the environment variables needed to run the vending machine. Nevertheless there is a default config already. `Note` project won't run without these variables in place
 
-| Key            | Description                                                                     | Type               |
-| -------------- | ------------------------------------------------------------------------------- | ------------------ | ------------ | ------ |
-| SLOTS          | This is the number of slot for the machine where each slot belongs to a product | `number`           |
-| SLOT_SIZE      | This is the maximum number of item per slot                                     | number             |
-| COINS_CURRENCY | the currency the machine should accept.                                         | `dollar` or `euro` |
-| PORT           | the port application should run on                                              | number             |
-| NODE_ENV       | the environment app should run on                                               | `development`      | `production` | `test` |
+| Key            | Description                                                                                                                  | Type               |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| SLOTS          | This is the number of slot for the machine where each slot belongs to a product                                              | `number`           |
+| SLOT_SIZE      | This is the maximum number of item per slot                                                                                  | `number`           |
+| COINS_CURRENCY | the currency the machine should accept.                                                                                      | `dollar` or `euro` |
+| PORT           | the port application should run on. default is `3001` if you use any other PORT please update the frontend .env to point it. | `number`           |
+| NODE_ENV       | the environment app should run on.                                                                                           | `development`      |
 
 **NOTE**
-You can customize your own coin for thsi project by following the this instructions
+You can customize your own coin for this project by following thesee instructions
 
 - Goto `backends/vending-machine/src/core/currency-manager/currency-configs`
 - Add your own directory for currency and follow the format of `dollar` or `euro` as a guide for your own currency

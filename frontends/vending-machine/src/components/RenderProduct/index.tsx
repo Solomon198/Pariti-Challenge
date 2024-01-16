@@ -4,14 +4,24 @@ import { ProductContainer, Slot, SlotContainer } from './styled'
 
 interface Props {
     products: IProduct[]
+    onSelect?: (product: IProduct) => void
 }
 
-const RenderProduct = ({ products }: Props): JSX.Element => {
+const RenderProduct = ({ products, onSelect }: Props): JSX.Element => {
+    const handleSelect = (prod: IProduct): void => {
+        if (onSelect !== undefined) {
+            onSelect(prod)
+        }
+    }
     return (
         <Grid container spacing={2}>
             {products.map((product) => (
                 <Grid item key={product.slot} md={4}>
-                    <ProductContainer>
+                    <ProductContainer
+                        onClick={() => {
+                            handleSelect(product)
+                        }}
+                    >
                         <Typography variant="h6">
                             {product.name} <br />
                             <span style={{ fontSize: 12 }}>
