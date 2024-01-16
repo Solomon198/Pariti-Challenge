@@ -29,7 +29,7 @@ export function* watchFetchProduct() {
                 yield put(fetchingProduct({ status: true }))
                 const products = yield call(fetchProduct.bind(null))
                 const { data } = products as AxiosResponse
-                yield put(productFetched({ products: data as IProduct[] }))
+                yield put(productFetched({ products: data.data as IProduct[] }))
                 yield put(fetchingProduct({ status: false }))
             } catch (e: any) {
                 yield put(fetchingProduct({ status: false }))
@@ -50,7 +50,7 @@ export function* watchFetchVault() {
                 yield put(fetchingVault({ status: true }))
                 const products = yield call(fetchVault.bind(null))
                 const { data } = products as AxiosResponse
-                yield put(vaultFetched({ vault: data as CurrencyValue[] }))
+                yield put(vaultFetched({ vault: data.data as CurrencyValue[] }))
                 yield put(fetchingVault({ status: false }))
             } catch (e: any) {
                 yield put(fetchingVault({ status: false }))
@@ -76,7 +76,7 @@ export function* watchUpdateCoin() {
                 yield put(
                     updatingCoin({
                         status: false,
-                        vault: data as CurrencyValue[],
+                        vault: data.data as CurrencyValue[],
                     })
                 )
             } catch (e: any) {
@@ -103,7 +103,7 @@ export function* watchWithdrawCoin() {
                 yield put(
                     withdrawingCoins({
                         status: false,
-                        coin: data as CurrencyValue[],
+                        coin: data.data as CurrencyValue[],
                     })
                 )
             } catch (e: any) {
@@ -130,7 +130,7 @@ export function* watchUpdateProduct() {
                 yield put(
                     updatingProduct({
                         status: false,
-                        product: data as IProduct,
+                        product: data.data as IProduct,
                     })
                 )
             } catch (e: any) {

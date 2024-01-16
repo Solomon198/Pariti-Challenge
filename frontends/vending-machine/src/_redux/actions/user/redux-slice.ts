@@ -7,6 +7,8 @@ interface IUserState {
     selectingSlot: boolean
     depositingCoin: boolean
     buyingProduct: boolean
+    userDeposit: number
+    selectedSlot: number | null
 }
 
 const defaultState: IUserState = {
@@ -15,51 +17,57 @@ const defaultState: IUserState = {
     selectingSlot: false,
     depositingCoin: false,
     buyingProduct: false,
+    userDeposit: 0,
+    selectedSlot: null,
 }
 
 export const UserSlice = createSlice({
     name: 'user',
     initialState: defaultState,
     reducers: {
-        fetchingProduct: (
+        fetchingUserProduct: (
             state,
-            action: PayloadAction<{ status: boolean }>
+            action: PayloadAction<{ status: boolean; products?: IProduct[] }>
         ) => {
             state.loadingProduct = action.payload.status
-        },
-        productFetched: (
-            state,
-            action: PayloadAction<{ products: IProduct[] }>
-        ) => {
-            state.products = action.payload.products
-            state.loadingProduct = false
+            if (action.payload.products !== undefined) {
+                state.products = action.payload.products
+            }
         },
         selectingSlot: (
             state,
-            action: PayloadAction<{ status: boolean }>
+            action: PayloadAction<{ status: boolean; slot?: number }>
         ) => {
             state.selectingSlot = action.payload.status
+            if (action.payload.slot !== undefined) {
+                state.selectedSlot = action.payload.slot
+            }
         },
         depositingCoin: (
             state,
-            action: PayloadAction<{ status: boolean }>
+            action: PayloadAction<{ status: boolean; userDeposits?: number }>
         ) => {
             state.depositingCoin = action.payload.status
+            if (action.payload.userDeposits !== undefined) {
+                state.userDeposit = action.payload.userDeposits
+            }
         },
         buyingProduct: (
             state,
-            action: PayloadAction<{ status: boolean }>
+            action: PayloadAction<{ status: boolean; success?: boolean }>
         ) => {
             state.buyingProduct = action.payload.status
+            if (action.payload.success === true) {
+                state.selectedSlot = null
+                state.userDeposit = 0
+            }
         },
     },
 })
 
 export const {
-    fetchingProduct,
+    fetchingUserProduct,
     buyingProduct,
-    productFetched,
     selectingSlot,
     depositingCoin,
-    
 } = UserSlice.actions
