@@ -16,6 +16,7 @@ import {
 } from '../../../api'
 import { type AxiosResponse } from 'axios'
 import { type IProduct } from '@vending/utils'
+import { toast } from 'react-toastify'
 
 export function* watchFetchUserProduct() {
     yield takeLeading(
@@ -27,15 +28,16 @@ export function* watchFetchUserProduct() {
                 const { data } = products as AxiosResponse
                 yield put(
                     fetchingUserProduct({
-                        products: data as IProduct[],
+                        products: data.data as IProduct[],
                         status: false,
                     })
                 )
+                toast.success('Products fetched successfully!!')
             } catch (e: any) {
                 yield put(fetchingUserProduct({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }
@@ -58,11 +60,12 @@ export function* watchDepositCoins() {
                         status: false,
                     })
                 )
+                toast.success('Coin added successfully!')
             } catch (e: any) {
                 yield put(depositingCoin({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }
@@ -71,7 +74,7 @@ export function* watchDepositCoins() {
 
 export function* watchSelectingSlot() {
     yield takeLeading(
-        SAGA_ACTIONS.USER_DEPOSIT_COIN,
+        SAGA_ACTIONS.USER_SELECT_SLOT,
         function* (action: any): Generator<any> {
             try {
                 yield put(selectingSlot({ status: true }))
@@ -85,11 +88,12 @@ export function* watchSelectingSlot() {
                         status: false,
                     })
                 )
+                toast.success('Slot selected!')
             } catch (e: any) {
                 yield put(selectingSlot({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }
@@ -103,19 +107,20 @@ export function* watchConfirmPurchase() {
             try {
                 yield put(buyingProduct({ status: true }))
 
-                yield call(confirmPurchase.bind(null))
-
+                const result = yield call(confirmPurchase.bind(null))
+                const { data } = result as AxiosResponse
                 yield put(
                     buyingProduct({
-                        success: true,
+                        ...data.data,
                         status: false,
                     })
                 )
+                toast.success('Product dispensed!')
             } catch (e: any) {
                 yield put(buyingProduct({ status: false }))
                 const messages = handleRequestErrors(e)
                 messages.forEach((msg) => {
-                    console.log(msg)
+                    toast.error(msg)
                 })
             }
         }

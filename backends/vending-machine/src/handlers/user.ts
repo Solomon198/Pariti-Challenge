@@ -24,10 +24,11 @@ export const selectSlot = async (req: Request, res: Response) => {
 
 export const buyProduct = async (req: Request, res: Response) => {
   try {
-    const change = vendingMachine.confirmPurchase();
     const product = vendingMachine.products.find(
       (p) => p.slot === vendingMachine.selectedSlot
     );
+    const change = vendingMachine.confirmPurchase();
+    
     res.send(new ResponsePayload({ change, product }));
   } catch (e: any) {
     throw new BadRequestError(e.message);

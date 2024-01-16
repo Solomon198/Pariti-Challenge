@@ -1,5 +1,5 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { type IProduct } from '@vending/utils'
+import { type IProduct, type CurrencyValue } from '@vending/utils'
 
 interface IUserState {
     products: IProduct[]
@@ -9,6 +9,7 @@ interface IUserState {
     buyingProduct: boolean
     userDeposit: number
     selectedSlot: number | null
+    userChange: CurrencyValue[]
 }
 
 const defaultState: IUserState = {
@@ -19,6 +20,7 @@ const defaultState: IUserState = {
     buyingProduct: false,
     userDeposit: 0,
     selectedSlot: null,
+    userChange: [],
 }
 
 export const UserSlice = createSlice({
@@ -54,12 +56,22 @@ export const UserSlice = createSlice({
         },
         buyingProduct: (
             state,
-            action: PayloadAction<{ status: boolean; success?: boolean }>
+            action: PayloadAction<{
+                status: boolean
+                change?: CurrencyValue[]
+                product?: IProduct
+            }>
         ) => {
             state.buyingProduct = action.payload.status
-            if (action.payload.success === true) {
+            if (action.payload.change !== undefined) {
                 state.selectedSlot = null
                 state.userDeposit = 0
+                state.userChange = action.payload.change
+                // update products
+                const pIndex = state.products.findIndex(
+                    (p) => p.slot === action.payload.product?.slot
+                )
+                state.products[pIndex] = action.payload.product as IProduct
             }
         },
     },

@@ -26,7 +26,11 @@ class VendingMachine {
     this.machineVault = currencies[currency].getCurrency();
     this.machineVault.sort((a, b) => (a.value > b.value ? 1 : -1));
     this.slotSize = slotSize;
-    this.products = new CreateProducts(slots, slotSize).getProducts();
+    this.products = new CreateProducts(
+      slots,
+      slotSize,
+      this.machineVault[0].symbol
+    ).getProducts();
   }
 
   //utils
@@ -79,7 +83,7 @@ class VendingMachine {
       if (foundMoney.balance < quantity)
         throw new Error(MACHINE_OPERATION_ERRORS.WITHDRAW_INSUFFICIENT_FUNDS);
       foundMoney.balance = foundMoney.balance - quantity;
-      return Array(quantity).map((_)=>({...foundMoney}));
+      return Array(quantity).map((_) => ({ ...foundMoney }));
     }
     throw new Error("Unexpected errror withdrawing funds");
   }
@@ -108,7 +112,11 @@ class VendingMachine {
   }
 
   getUserChange(change: number): Array<TCurrencyValue> {
-    if (change === 0) return [];
+    if (change === 0) {
+      this.selectedSlot = null;
+      this.userDeposit = 0;
+      return [];
+    };
     const userChange: CurrencyValue[] = [];
     const copiedVault = this.machineVault.map((coin) => ({
       ...coin,
@@ -152,7 +160,11 @@ class VendingMachine {
   ressetMachine() {
     this.userDeposit = 0;
     this.machineVault = getAllCurrencyCoins()[this.currency].getCurrency();
-    this.products = new CreateProducts(this.slots, this.slotSize).getProducts();
+    this.products = new CreateProducts(
+      this.slots,
+      this.slotSize,
+      this.machineVault[0].symbol
+    ).getProducts();
     this.selectedSlot = null;
   }
 }

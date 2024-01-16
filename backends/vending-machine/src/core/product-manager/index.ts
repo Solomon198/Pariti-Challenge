@@ -5,13 +5,17 @@ import { IProduct } from "@vending/utils";
 
 export default class CreateProducts {
   private products: IProduct[];
-  constructor(public slots: number, public slotSize: number) {
+  constructor(
+    public slots: number,
+    public slotSize: number,
+    currencySymbol: string
+  ) {
     this.slotSize = slotSize;
     this.slots = slots;
-    this.products = this.createProducts();
+    this.products = this.createProducts(currencySymbol);
   }
 
-  createProducts(): IProduct[] {
+  createProducts(currencySymbol: string): IProduct[] {
     const createdSlots = Array(this.slots)
       .fill("")
       .map((_, index) => index + 1);
@@ -22,6 +26,7 @@ export default class CreateProducts {
         price: _.sample(productPrizes) as number,
         slot,
         quantity: this.slotSize,
+        currencySymbol,
       };
       return product;
     });
