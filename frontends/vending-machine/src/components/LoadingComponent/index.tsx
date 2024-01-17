@@ -1,6 +1,9 @@
 import { CircularProgress, Container, Typography } from '@mui/material'
 
-const Loader = ({ text }: { text: string }): JSX.Element => {
+export interface Props {
+    text: string
+}
+const Loader = ({ text }: Props): JSX.Element => {
     return (
         <Container
             style={{
@@ -11,7 +14,7 @@ const Loader = ({ text }: { text: string }): JSX.Element => {
                 height: '100vh',
             }}
         >
-            <CircularProgress />
+            <CircularProgress data-testid="loading-spinner" />
             <Typography style={{ marginLeft: 10 }} variant="subtitle1">
                 {text}
             </Typography>

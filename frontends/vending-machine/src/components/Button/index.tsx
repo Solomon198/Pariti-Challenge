@@ -19,6 +19,7 @@ const Button: React.FC<IButton> = ({
             {children}{' '}
             {(isLoading ?? false) && (
                 <CircularProgress
+                    data-testid="loading-spinner"
                     size={20}
                     style={{ marginLeft: 10, color: 'white' }}
                 />
