@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
-axios.defaults.baseURL = process.env.REACT_API_URL
+axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL
 
 const { store, persistor } = getStore()
 root.render(
