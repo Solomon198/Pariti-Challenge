@@ -1,11 +1,6 @@
 import env from "../../env/env";
 import { getAllCurrencyCoins } from "../currency-manager";
-import {
-  CurrencyValue,
-  IProduct,
-  TCurrencyValue,
-  TProduct,
-} from "@vending/utils";
+import { CurrencyValue, IProduct, TCurrencyValue } from "@vending/utils";
 import { MACHINE_OPERATION_ERRORS } from "../errors-defination";
 import CreateProducts from "../product-manager";
 
@@ -59,10 +54,10 @@ class VendingMachine {
     return product;
   }
 
-  adjustAvailableProduct(slot: number, availableQty: number): IProduct {
+  adjustAvailableProduct(slot: number, newQty: number): IProduct {
     const product = this.findProductBySlotNumber(slot);
-    if (availableQty <= this.slotSize) {
-      product.quantity = availableQty;
+    if (newQty <= this.slotSize) {
+      product.quantity = newQty;
       return product;
     }
     throw new Error(MACHINE_OPERATION_ERRORS.EXCEEDED_SLOT_SIZE);
@@ -111,10 +106,14 @@ class VendingMachine {
     throw new Error("Unexpected error depositing funds");
   }
 
+  private resetUserInputs(): void {
+    this.selectedSlot = null;
+    this.userDeposit = 0;
+  }
+
   getUserChange(change: number): Array<TCurrencyValue> {
     if (change === 0) {
-      this.selectedSlot = null;
-      this.userDeposit = 0;
+      this.resetUserInputs();
       return [];
     }
     const userChange: CurrencyValue[] = [];
@@ -131,8 +130,7 @@ class VendingMachine {
         userChange.push(copiedVault[i]);
         if (change === 0) {
           this.machineVault = copiedVault;
-          this.userDeposit = 0;
-          this.selectedSlot = null;
+          this.resetUserInputs();
           return userChange.map((change) => _.omit(change, "balance"));
         }
         break;

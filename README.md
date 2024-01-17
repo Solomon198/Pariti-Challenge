@@ -31,8 +31,8 @@ To run application on `PROD` mode run
  npm run start
 ```
 
-**STEP 4 - Running Application**
-You can now view the application on `http://locahost:3000`
+**STEP 4 - Viewing Application**
+You can now view the application on `http://locahost:3000`.`Note` browser opens automatically on dev mode but not on PROD mode.
 
 #### Additional Scripts
 
@@ -67,3 +67,4 @@ You can customize your own coin for this project by following thesee instruction
 - Goto `backends/vending-machine/src/core/currency-manager/currency-configs`
 - Add your own directory for currency and follow the format of `dollar` or `euro` as a guide for your own currency
 - Make sure to export your currency at `backends/vending-machine/src/core/currency-manager/currency-configs/index.ts`
+- Finally add the name of your currency to `.env` COINS_CURRENCY = `<your currency name in lower case`>
